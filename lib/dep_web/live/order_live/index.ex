@@ -39,20 +39,20 @@ defmodule DepWeb.OrderLive.Index do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    order = Products.get_order!(id)
-    {:ok, _} = Products.delete_order(order)
-
-    {:noreply, stream_delete(socket, :orders, order)}
-  end
-
-  @impl true
   def handle_info({:order_modified, order}, socket) do
     {:noreply, stream_insert(socket, :orders, order)}
   end
 
   @impl true
   def handle_info({:order_deleted, order}, socket) do
+    {:noreply, stream_delete(socket, :orders, order)}
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    order = Products.get_order!(id)
+    {:ok, _} = Products.delete_order(order)
+
     {:noreply, stream_delete(socket, :orders, order)}
   end
 end
